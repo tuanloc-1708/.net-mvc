@@ -9,6 +9,6 @@ namespace MyStore.Services.LocNT
 {
     public interface IAccountService
     {
-        AccountMember GetAccountById(string accountId);
+        AccountMember GetAccountByEmail(string accountId);
     }
 }

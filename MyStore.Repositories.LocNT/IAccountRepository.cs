@@ -9,6 +9,6 @@ namespace MyStore.Repositories.LocNT
 {
     public interface IAccountRepository
     {
-        AccountMember GetAccountById(string accountId);
+        AccountMember GetAccountByEmail(string accountId);
     }
 }

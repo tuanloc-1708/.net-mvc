@@ -10,8 +10,17 @@ namespace MyStore.Repositories.LocNT
 {
     public class AccountRepository : IAccountRepository
     {
-        public AccountMember GetAccountById(string accountId)
-                => AccountDAO.GetAccountById(accountId);
+        private readonly MyStoreContext _context;
+
+        public AccountRepository(MyStoreContext context)
+        {
+            _context = context;
+        }
+        public AccountMember GetAccountByEmail(string email)
+        {
+            
+            return _context.AccountMembers.FirstOrDefault(a => a.EmailAddress == email);
+        }
     }
 }
 

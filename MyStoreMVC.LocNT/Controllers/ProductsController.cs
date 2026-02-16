@@ -27,6 +27,12 @@ namespace MyStoreMVC.LocNT.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
+            var userEmail = HttpContext.Session.GetString("UserEmail");
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
             var products = _productService.GetProducts();
             return View(products);
         }

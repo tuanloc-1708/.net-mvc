@@ -12,14 +12,14 @@ namespace MyStore.Services.LocNT
     {
         private readonly IAccountRepository iAccountRepository;
 
-        public AccountService()
+        public AccountService(IAccountRepository accountRepository)
         {
-            iAccountRepository = new AccountRepository();
+            iAccountRepository = accountRepository;
         }
 
-        public AccountMember GetAccountById(string accountId)
+        public AccountMember GetAccountByEmail(string accountEmail)
         {
-            return iAccountRepository.GetAccountById(accountId);
+            return iAccountRepository.GetAccountByEmail(accountEmail);
         }
     }
 }
