@@ -10,6 +10,15 @@ namespace MyStore.Repositories.LocNT
 {
     public class CategoryRepository : ICategoryRepository
     {
-        public List<Category> GetCategories() => CategoryDAO.GetCategories();
+        private readonly MyStoreContext _context;
+
+        public CategoryRepository(MyStoreContext context)
+        {
+            _context = context;
+        }
+        public List<Category> GetCategories()
+        {
+            return _context.Categories.ToList();
+        }
     }
 }

@@ -12,9 +12,9 @@ namespace MyStore.Services.LocNT
     {
         private readonly ICategoryRepository iCategoryRepository;
 
-        public CategoryService()
+        public CategoryService(ICategoryRepository repository)
         {
-            iCategoryRepository = new CategoryRepository();
+            iCategoryRepository = repository;
         }
 
         public List<Category> GetCategories()
