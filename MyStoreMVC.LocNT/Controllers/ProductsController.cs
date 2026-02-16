@@ -27,8 +27,14 @@ namespace MyStoreMVC.LocNT.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var myStoreContext = _context.Products.Include(p => p.Category);
-            return View(await myStoreContext.ToListAsync());
+            var userEmail = HttpContext.Session.GetString("UserEmail");
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var products = _productService.GetProducts();
+            return View(products);
         }
 
         // GET: Products/Details/5
@@ -39,9 +45,7 @@ namespace MyStoreMVC.LocNT.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.ProductId == id);
+            var product = _productService.GetProductById((int)id);
             if (product == null)
             {
                 return NotFound();
@@ -53,7 +57,7 @@ namespace MyStoreMVC.LocNT.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName");
+            ViewData["CategoryId"] = new SelectList(_categoryService.GetCategories(), "CategoryId", "CategoryName");
             return View();
         }
 
@@ -66,11 +70,11 @@ namespace MyStoreMVC.LocNT.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                _productService.SaveProduct(product);
+                
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_categoryService.GetCategories(), "CategoryId", "CategoryName", product.CategoryId);
             return View(product);
         }
 
@@ -82,12 +86,12 @@ namespace MyStoreMVC.LocNT.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
+            var product = _productService.GetProductById((int)id);
             if (product == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_categoryService.GetCategories(), "CategoryId", "CategoryName", product.CategoryId);
             return View(product);
         }
 
@@ -107,12 +111,11 @@ namespace MyStoreMVC.LocNT.Controllers
             {
                 try
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
+                    _productService.UpdateProduct(product);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception e)
                 {
-                    if (!ProductExists(product.ProductId))
+                    if (!_productService.GetProducts().Any(p => p.ProductId==id))
                     {
                         return NotFound();
                     }
@@ -123,7 +126,7 @@ namespace MyStoreMVC.LocNT.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_categoryService.GetCategories(), "CategoryId", "CategoryName", product.CategoryId);
             return View(product);
         }
 
@@ -135,9 +138,8 @@ namespace MyStoreMVC.LocNT.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.ProductId == id);
+            var product = _productService.GetProductById((int)id);
+                
             if (product == null)
             {
                 return NotFound();
@@ -151,19 +153,18 @@ namespace MyStoreMVC.LocNT.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = _productService.GetProductById((int)id);
             if (product != null)
             {
-                _context.Products.Remove(product);
+                _productService.DeleteProduct(product);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProductExists(int id)
         {
-            return _context.Products.Any(e => e.ProductId == id);
+            return _productService.GetProductById(id) != null;
         }
     }
 }

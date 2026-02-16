@@ -12,9 +12,9 @@ namespace MyStore.Services.LocNT
     {
         private readonly IProductRepository iProductRepository;
 
-        public ProductService()
+        public ProductService(IProductRepository repository)
         {
-            iProductRepository = new ProductRepository();
+            iProductRepository = repository;
         }
 
         public void DeleteProduct(Product p)
