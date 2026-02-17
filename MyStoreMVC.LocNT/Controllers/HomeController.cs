@@ -28,5 +28,23 @@ namespace MyStoreMVC.LocNT.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public IActionResult CatGiauKhobau() 
+        {
+            HttpContext.Session.SetString("BiMat", "8h An Com");
+            return Content("Cat giau kho bau thanh cong. Sang trang khac de xem");
+        }
+
+        public IActionResult XemKhoBau() 
+        {
+            var tinNhan = HttpContext.Session.GetString("BiMat");
+            if (string.IsNullOrEmpty(tinNhan))
+            {
+                return Content("co cai nit Session chua tao");
+            }
+            return Content("ahaha: " + tinNhan);
+        }
+
+
     }
 }
